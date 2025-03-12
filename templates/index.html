@@ -1,0 +1,160 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h2 class="card-title mb-0">AI Agent Assistant</h2>
+            </div>
+            <div class="card-body">
+                <p class="lead">Ask me anything! I can create plans, search the web, and calculate results for you.</p>
+                
+                <div class="mb-3">
+                    <label for="user-input" class="form-label">Your Question:</label>
+                    <textarea class="form-control" id="user-input" rows="3" placeholder="What would you like to know or plan?"></textarea>
+                </div>
+                
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary" id="submit-btn" type="button">
+                        <i class="bi bi-send"></i> Submit
+                    </button>
+                </div>
+                
+                <div class="mt-4" id="response-container" style="display: none;">
+                    <div class="card">
+                        <div class="card-header bg-secondary">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span>Agent Response</span>
+                                <span id="trace-link-container" style="display: none;">
+                                    <a href="#" target="_blank" id="trace-link" class="btn btn-sm btn-info">
+                                        <i class="bi bi-activity"></i> View Trace
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="response-text" class="mb-0"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-danger mt-3" id="error-message" style="display: none;"></div>
+                
+                <div class="d-flex justify-content-center mt-3">
+                    <div class="spinner-border text-primary" role="status" id="loading-spinner" style="display: none;">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer text-muted">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span>Using o3-mini model with planning</span>
+                    <span>
+                        <i class="bi bi-search" data-bs-toggle="tooltip" title="Web Search"></i>
+                        <i class="bi bi-calculator" data-bs-toggle="tooltip" title="Calculator"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const userInput = document.getElementById('user-input');
+        const submitBtn = document.getElementById('submit-btn');
+        const responseContainer = document.getElementById('response-container');
+        const responseText = document.getElementById('response-text');
+        const errorMessage = document.getElementById('error-message');
+        const loadingSpinner = document.getElementById('loading-spinner');
+        const traceLink = document.getElementById('trace-link');
+        const traceLinkContainer = document.getElementById('trace-link-container');
+        
+        submitBtn.addEventListener('click', async function() {
+            const query = userInput.value.trim();
+            
+            if (!query) {
+                errorMessage.textContent = 'Please enter a question or task.';
+                errorMessage.style.display = 'block';
+                return;
+            }
+            
+            // Hide error message if previously shown
+            errorMessage.style.display = 'none';
+            
+            // Show loading spinner
+            loadingSpinner.style.display = 'block';
+            
+            // Disable submit button while processing
+            submitBtn.disabled = true;
+            
+            try {
+                const response = await fetch('/ask', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ query }),
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Format the response text with line breaks and markdown
+                    responseText.innerHTML = formatResponse(data.response);
+                    responseContainer.style.display = 'block';
+                    
+                    // Set trace link if available
+                    if (data.trace_id) {
+                        traceLink.href = `https://platform.openai.com/traces/${data.trace_id}`;
+                        traceLinkContainer.style.display = 'inline-block';
+                    } else {
+                        traceLinkContainer.style.display = 'none';
+                    }
+                } else {
+                    errorMessage.textContent = data.error || 'An error occurred while processing your request.';
+                    errorMessage.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                errorMessage.textContent = 'Network error. Please try again later.';
+                errorMessage.style.display = 'block';
+            } finally {
+                // Hide loading spinner
+                loadingSpinner.style.display = 'none';
+                
+                // Re-enable submit button
+                submitBtn.disabled = false;
+            }
+        });
+        
+        // Allow submitting with Enter key
+        userInput.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                submitBtn.click();
+            }
+        });
+        
+        // Simple function to format the response text
+        function formatResponse(text) {
+            // Convert line breaks to <br> tags
+            text = text.replace(/\n/g, '<br>');
+            
+            // Basic formatting for headers
+            text = text.replace(/###\s+(.*?)(\n|$)/g, '<h5>$1</h5>');
+            text = text.replace(/##\s+(.*?)(\n|$)/g, '<h4>$1</h4>');
+            text = text.replace(/#\s+(.*?)(\n|$)/g, '<h3>$1</h3>');
+            
+            // Bold and italic text
+            text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            
+            return text;
+        }
+    });
+</script>
+{% endblock %}
