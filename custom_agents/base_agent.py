@@ -1,10 +1,6 @@
 from typing import List, Dict, Any, Optional, Type
 import logging
 
-# Import from the OpenAI Agents SDK (openai-agents)
-# The package is imported as 'agents' in Python
-from agents import Agent, ModelSettings, function_tool
-
 from config import Config
 
 class BaseAgent:
@@ -22,32 +18,47 @@ class BaseAgent:
         self.name = name
         self.instructions = instructions
         self.tools = tools or []
-        self.model_settings = ModelSettings(**Config.get_model_settings())
+        self.model_name = Config.DEFAULT_MODEL
+        self.model_settings_dict = Config.get_model_settings()
     
-    def build(self) -> Agent:
+    def build(self, agent_factory=None, function_tool_factory=None, model_settings_factory=None):
         """
         Build and return an Agent instance.
         
         This implements the Factory Method pattern, allowing
         different agent types to customize how agents are built.
         
+        Args:
+            agent_factory: A function that creates an Agent instance
+            function_tool_factory: A function that creates a function tool
+            model_settings_factory: A function that creates ModelSettings
+            
         Returns:
             An Agent instance configured based on this agent's properties
         """
         logging.info(f"Building agent: {self.name}")
         
-        # Convert tools to a list of function tools if they aren't already
+        # If we don't have the required factories, return a placeholder
+        if not all([agent_factory, function_tool_factory, model_settings_factory]):
+            logging.warning("Missing required factories, returning self as placeholder")
+            return self
+            
+        # Create the model settings
+        model_settings = model_settings_factory(**self.model_settings_dict)
+        
+        # Convert tools to a list of function tools
         function_tools = []
         for tool in self.tools:
             if hasattr(tool, 'to_function_tool'):
-                function_tools.append(tool.to_function_tool())
+                function_tools.append(tool.to_function_tool(function_tool_factory))
             else:
                 function_tools.append(tool)
         
-        return Agent(
+        # Create and return the agent
+        return agent_factory(
             name=self.name,
             instructions=self.instructions,
-            model=Config.DEFAULT_MODEL,
-            model_settings=self.model_settings,
+            model=self.model_name,
+            model_settings=model_settings,
             tools=function_tools
         )

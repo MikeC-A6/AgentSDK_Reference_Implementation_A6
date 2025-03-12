@@ -1,7 +1,6 @@
 from typing import List, Optional, Dict, Any
 import logging
 
-from agents import Agent
 from custom_agents.base_agent import BaseAgent
 from tools.base_tool import BaseTool
 

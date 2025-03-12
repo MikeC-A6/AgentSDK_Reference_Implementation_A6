@@ -1,49 +1,55 @@
-/* Additional custom styles */
+/* Custom styles for AI Agent System */
 
-/* Make the response text more readable */
-#response-text {
-    line-height: 1.6;
-    white-space: pre-line;
+/* Add a bit more space in the container */
+.container {
+    padding: 15px;
 }
 
-/* Add some animations for a better UX */
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-.card {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 0.5rem;
-    overflow: hidden;
-}
-
+/* Style for agent response container */
 #response-container {
-    animation: fadeIn 0.5s ease-in-out;
+    border-radius: 8px;
+    transition: opacity 0.3s ease-in-out;
 }
 
-/* Custom styling for the loading spinner */
+/* Enhance text area appearance */
+#user-input {
+    resize: vertical;
+    min-height: 80px;
+    border-radius: 8px;
+}
+
+/* Make the submit button more noticeable */
+#submit-btn {
+    padding: 10px;
+    font-weight: 500;
+}
+
+/* Format response text nicely */
+#response-text {
+    white-space: pre-line;
+    line-height: 1.5;
+}
+
+/* Custom styling for the trace link */
+#trace-link {
+    text-decoration: none;
+    font-size: 0.8rem;
+}
+
+/* Style for loading spinner */
 #loading-spinner {
     width: 3rem;
     height: 3rem;
 }
 
-/* Improve textarea appearance */
-#user-input {
-    resize: vertical;
-    min-height: 100px;
-    transition: border-color 0.3s;
-}
-
-#user-input:focus {
-    border-color: var(--bs-primary);
-    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
-
 /* Footer styling */
 .footer {
-    position: relative;
-    margin-top: 2rem;
-    padding: 1rem 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 50px;
+    padding: 20px 0;
+}
+
+/* Tool icons in footer */
+.card-footer i {
+    margin-left: 10px;
+    font-size: 1.2rem;
 }

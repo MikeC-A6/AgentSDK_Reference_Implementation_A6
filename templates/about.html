@@ -1,0 +1,63 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h2 class="card-title mb-0">About This System</h2>
+            </div>
+            <div class="card-body">
+                <h3>AI Agent System with Planning Capabilities</h3>
+                
+                <p class="lead">
+                    This system is built using the official OpenAI Agents SDK (v0.0.3) and 
+                    follows SOLID design principles to create an extensible, maintainable agent system.
+                </p>
+                
+                <div class="mb-4">
+                    <h4>Key Features</h4>
+                    <ul class="list-group">
+                        <li class="list-group-item">Uses the official OpenAI Agents SDK</li>
+                        <li class="list-group-item">Designed with SOLID principles</li>
+                        <li class="list-group-item">Planning capabilities for complex tasks</li>
+                        <li class="list-group-item">Extensible tool system</li>
+                        <li class="list-group-item">Web search functionality</li>
+                    </ul>
+                </div>
+                
+                <div class="mb-4">
+                    <h4>Available Tools</h4>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Tool Name</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for tool in tools %}
+                                <tr>
+                                    <td>{{ tool.name }}</td>
+                                    <td>{{ tool.description }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info">
+                    <h4 class="alert-heading">Technical Details</h4>
+                    <p>This system uses the {{ model }} model with OpenAI's Agents SDK.</p>
+                    <p>The architecture follows Interface Segregation and Dependency Inversion principles from SOLID design.</p>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="/" class="btn btn-primary">Try it out</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
