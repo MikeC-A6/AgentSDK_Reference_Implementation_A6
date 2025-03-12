@@ -41,9 +41,10 @@ def init_agent_components():
     try:
         # Import required modules and components
         import agents
-        from agents import Agent as AgentClass
-        from agents import ModelSettings as ModelSettingsClass
-        from agents import function_tool as function_tool_fn
+        from agents.agent import Agent as AgentClass
+        from agents.model_settings import ModelSettings as ModelSettingsClass
+        from agents.tool import function_tool as function_tool_fn
+        from agents.models.interface import Model
         from agents import run
         
         # Store the imports in our global variables
