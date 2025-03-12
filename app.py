@@ -4,7 +4,6 @@ import asyncio
 from flask import Flask, render_template, request, jsonify
 import json
 from openai import OpenAI
-import importlib
 
 # Configure logging first
 logging.basicConfig(level=logging.DEBUG)
@@ -26,36 +25,25 @@ from tools.web_search import WebSearchTool
 from tools.calculator import CalculatorTool
 from config import Config
 
+# Import our agent wrapper module
+import agent_wrapper
+
 # Global variables for agent components
-Agent = None
-ModelSettings = None
-function_tool = None
-run_module = None
 planner_agent = None
 
 # Initialize agent components
 def init_agent_components():
     """Initialize agent components with proper imports."""
-    global Agent, ModelSettings, function_tool, run_module, planner_agent
+    global planner_agent
     
     try:
-        # Import required modules and components
-        import agents
-        from agents.agent import Agent as AgentClass
-        from agents.model_settings import ModelSettings as ModelSettingsClass
-        from agents.tool import function_tool as function_tool_fn
-        from agents.models.interface import Model
-        from agents import run
-        
-        # Store the imports in our global variables
-        Agent = AgentClass
-        ModelSettings = ModelSettingsClass
-        function_tool = function_tool_fn
-        run_module = run
+        # Check if agent wrapper initialized correctly
+        if not agent_wrapper.Agent:
+            logger.error("Agent wrapper failed to initialize")
+            return False
         
         # Log successful import
         logger.info("Successfully imported Agent SDK")
-        logger.debug(f"Agent SDK version: {getattr(agents, '__version__', 'unknown')}")
         
         # Now import our planner agent and create an instance
         from custom_agents.planner_agent import PlannerAgent
@@ -110,7 +98,7 @@ def ask():
         return jsonify({'error': 'Empty query'}), 400
     
     # Initialize agent components if not already done
-    if Agent is None:
+    if planner_agent is None:
         success = init_agent_components()
         if not success:
             return jsonify({'error': 'Failed to initialize agent components'}), 500
@@ -118,15 +106,15 @@ def ask():
     try:
         # Build the agent with required factories
         agent = planner_agent.build(
-            agent_factory=Agent,
-            function_tool_factory=function_tool,
-            model_settings_factory=ModelSettings
+            agent_factory=agent_wrapper.Agent,
+            function_tool_factory=agent_wrapper.function_tool,
+            model_settings_factory=agent_wrapper.ModelSettings
         )
         
         logger.debug(f"Agent built successfully: {agent}")
         
         # Run the agent with the user input
-        result = asyncio.run(run_module.Run.create(
+        run = agent_wrapper.create_run(
             agent=agent,
             messages=[
                 {
@@ -134,7 +122,8 @@ def ask():
                     "content": user_input
                 }
             ]
-        ).get_final_run_result())
+        )
+        result = asyncio.run(run.get_final_run_result())
         
         # Return the agent's response
         return jsonify({
