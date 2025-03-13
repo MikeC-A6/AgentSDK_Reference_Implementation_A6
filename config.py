@@ -22,6 +22,8 @@ class Config:
     @classmethod
     def get_model_settings(cls) -> Dict[str, Any]:
         """Returns model settings dictionary."""
+        # Using default settings for model since reasoning is not supported
+        # in the ModelSettings class in the agents SDK
         return {
-            "reasoning": {"effort": cls.DEFAULT_REASONING_EFFORT}
+            "temperature": 0.7
         }
