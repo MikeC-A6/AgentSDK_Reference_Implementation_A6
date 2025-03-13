@@ -21,7 +21,6 @@ if not os.environ.get("OPENAI_API_KEY"):
 openai_client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 # Import our local tools and config
-from tools.web_search import WebSearchTool
 from tools.calculator import CalculatorTool
 from config import Config
 
@@ -49,11 +48,11 @@ def init_agent_components():
         from custom_agents.planner_agent import PlannerAgent
         
         # Create our tools
-        web_search_tool = WebSearchTool()
+        # Removed web_search_tool due to schema issues
         calculator_tool = CalculatorTool()
         
-        # Create the planner agent with our tools
-        planner_agent_instance = PlannerAgent(tools=[web_search_tool, calculator_tool])
+        # Create the planner agent with only calculator tool
+        planner_agent_instance = PlannerAgent(tools=[calculator_tool])
         planner_agent = planner_agent_instance
         
         logger.info("Successfully initialized PlannerAgent with tools")

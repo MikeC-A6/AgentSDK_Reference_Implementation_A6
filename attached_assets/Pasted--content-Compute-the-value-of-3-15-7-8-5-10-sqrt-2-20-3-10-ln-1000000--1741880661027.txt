@@ -1,0 +1,113 @@
+[
+  {
+    "content": "Compute the value of (3^15 * 7^8 - 5^10) / sqrt(2^20 + 3^10) + ln(1000000)",
+    "role": "user"
+  }
+]
+Tools:
+[
+  {
+    "name": "web_search",
+    "parameters": {
+      "properties": {
+        "args": {
+          "items": {},
+          "title": "Args",
+          "type": "array"
+        },
+        "kwargs": {
+          "title": "Kwargs",
+          "type": "object",
+          "additionalProperties": false
+        }
+      },
+      "title": "web_search_args",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "args",
+        "kwargs"
+      ]
+    },
+    "strict": true,
+    "type": "function",
+    "description": "Search the web for information. Provide a search query to get results."
+  },
+  {
+    "name": "calculate",
+    "parameters": {
+      "properties": {
+        "args": {
+          "items": {},
+          "title": "Args",
+          "type": "array"
+        },
+        "kwargs": {
+          "title": "Kwargs",
+          "type": "object",
+          "additionalProperties": false
+        }
+      },
+      "title": "calculate_args",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "args",
+        "kwargs"
+      ]
+    },
+    "strict": true,
+    "type": "function",
+    "description": "Perform basic calculations. Supports addition, subtraction, multiplication, division, and exponentiation."
+  }
+]
+Stream: False
+Tool choice: NOT_GIVEN
+Response format: NOT_GIVEN
+
+DEBUG:openai._base_client:Request options: {'method': 'post', 'url': '/responses', 'headers': {'User-Agent': 'Agents/Python 0.0.0'}, 'files': None, 'json_data': {'input': [{'content': 'Compute the value of (3^15 * 7^8 - 5^10) / sqrt(2^20 + 3^10) + ln(1000000)', 'role': 'user'}], 'model': 'o3-mini', 'include': [], 'instructions': "\n        You are a helpful assistant with planning capabilities. When faced with complex tasks:\n        \n        1. Break down the task into smaller steps\n        2. Create a clear plan to achieve the goal\n        3. Execute the plan step by step\n        4. Use the available tools when needed to gather information or perform calculations\n        5. Always explain your reasoning and current step of the plan\n        \n        When using web search:\n        - Be specific with search queries\n        - Summarize and integrate search results into your responses\n        - Search for up-to-date information when needed\n        \n        When creating plans:\n        - Consider possible challenges and include contingency steps\n        - Estimate the time or complexity of each step\n        - Clearly mark which step you're currently on\n        \n        Always be helpful, accurate, and thorough in your responses.\n        ", 'stream': False, 'temperature': 0.7, 'tools': [{'name': 'web_search', 'parameters': {'properties': {'args': {'items': {}, 'title': 'Args', 'type': 'array'}, 'kwargs': {'title': 'Kwargs', 'type': 'object', 'additionalProperties': False}}, 'title': 'web_search_args', 'type': 'object', 'additionalProperties': False, 'required': ['args', 'kwargs']}, 'strict': True, 'type': 'function', 'description': 'Search the web for information. Provide a search query to get results.'}, {'name': 'calculate', 'parameters': {'properties': {'args': {'items': {}, 'title': 'Args', 'type': 'array'}, 'kwargs': {'title': 'Kwargs', 'type': 'object', 'additionalProperties': False}}, 'title': 'calculate_args', 'type': 'object', 'additionalProperties': False, 'required': ['args', 'kwargs']}, 'strict': True, 'type': 'function', 'description': 'Perform basic calculations. Supports addition, subtraction, multiplication, division, and exponentiation.'}]}}
+DEBUG:httpcore.connection:connect_tcp.started host='api.openai.com' port=443 local_address=None timeout=5.0 socket_options=None
+DEBUG:httpcore.connection:connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x7f31da484b10>
+DEBUG:httpcore.connection:start_tls.started ssl_context=<ssl.SSLContext object at 0x7f31d961ccb0> server_hostname='api.openai.com' timeout=5.0
+DEBUG:httpcore.connection:start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x7f31d8cd3050>
+DEBUG:httpcore.http11:send_request_headers.started request=<Request [b'POST']>
+DEBUG:httpcore.http11:send_request_headers.complete
+DEBUG:httpcore.http11:send_request_body.started request=<Request [b'POST']>
+DEBUG:httpcore.http11:send_request_body.complete
+DEBUG:httpcore.http11:receive_response_headers.started request=<Request [b'POST']>
+DEBUG:httpcore.http11:receive_response_headers.complete return_value=(b'HTTP/1.1', 400, b'Bad Request', [(b'Date', b'Thu, 13 Mar 2025 15:43:03 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'270'), (b'Connection', b'keep-alive'), (b'openai-version', b'2020-10-01'), (b'openai-organization', b'user-it1rjsnvsxprd3wbxr1oqmpg'), (b'x-request-id', b'req_3d6887bd8098f20ce9a6f6b4a8da2bec'), (b'openai-processing-ms', b'28'), (b'strict-transport-security', b'max-age=31536000; includeSubDomains; preload'), (b'cf-cache-status', b'DYNAMIC'), (b'Set-Cookie', b'__cf_bm=lDKhh0l.seeOH3ma2Q_qIQws3oTdjKYFaYhir6j6PLA-1741880583-1.0.1.1-rY2e0q4qw4usIB6nPQhR1ibHnE8WUs5d4eiucLMMI5lxttfLDXSV9rLZg5_ThR0ZXVW4XuYzxLvZFuL.RnY6U4K1DhLNanvoObsvEf_vtMY; path=/; expires=Thu, 13-Mar-25 16:13:03 GMT; domain=.api.openai.com; HttpOnly; Secure; SameSite=None'), (b'X-Content-Type-Options', b'nosniff'), (b'Set-Cookie', b'_cfuvid=uX72R8bsq1n2IXI3bRyqnFwdLdb30.DkQgVNXuziWAQ-1741880583659-0.0.1.1-604800000; path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None'), (b'Server', b'cloudflare'), (b'CF-RAY', b'91fca50bce019b75-SEA'), (b'alt-svc', b'h3=":443"; ma=86400')])
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 400 Bad Request"
+DEBUG:httpcore.http11:receive_response_body.started request=<Request [b'POST']>
+DEBUG:httpcore.http11:receive_response_body.complete
+DEBUG:httpcore.http11:response_closed.started
+DEBUG:httpcore.http11:response_closed.complete
+DEBUG:openai._base_client:HTTP Request: POST https://api.openai.com/v1/responses "400 Bad Request"
+DEBUG:openai._base_client:Encountered httpx.HTTPStatusError
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/openai/_base_client.py", line 1541, in _request
+    response.raise_for_status()
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/httpx/_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Client error '400 Bad Request' for url 'https://api.openai.com/v1/responses'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400
+DEBUG:openai._base_client:Not retrying
+DEBUG:openai._base_client:Re-raising status error
+ERROR:openai.agents:Error getting response: Error code: 400 - {'error': {'message': "Invalid schema for function 'web_search': In context=('properties', 'args', 'items'), schema must have a 'type' key.", 'type': 'invalid_request_error', 'param': 'tools[0].parameters', 'code': 'invalid_function_parameters'}}
+DEBUG:openai.agents.tracing:Resetting current trace
+ERROR:agent_wrapper:Error running agent: Error code: 400 - {'error': {'message': "Invalid schema for function 'web_search': In context=('properties', 'args', 'items'), schema must have a 'type' key.", 'type': 'invalid_request_error', 'param': 'tools[0].parameters', 'code': 'invalid_function_parameters'}}
+DEBUG:httpcore.connection:connect_tcp.started host='api.openai.com' port=443 local_address=None timeout=5.0 socket_options=None
+DEBUG:httpcore.connection:connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x7f31d8caf910>
+DEBUG:httpcore.connection:start_tls.started ssl_context=<ssl.SSLContext object at 0x7f31d9fb9c70> server_hostname='api.openai.com' timeout=5.0
+DEBUG:httpcore.connection:start_tls.complete return_value=<httpcore._backends.sync.SyncStream object at 0x7f31d8caf5d0>
+DEBUG:httpcore.http11:send_request_headers.started request=<Request [b'POST']>
+DEBUG:httpcore.http11:send_request_headers.complete
+DEBUG:httpcore.http11:send_request_body.started request=<Request [b'POST']>
+DEBUG:httpcore.http11:send_request_body.complete
+DEBUG:httpcore.http11:receive_response_headers.started request=<Request [b'POST']>
+DEBUG:httpcore.http11:receive_response_headers.complete return_value=(b'HTTP/1.1', 204, b'No Content', [(b'Date', b'Thu, 13 Mar 2025 15:43:08 GMT'), (b'Connection', b'keep-alive'), (b'x-request-id', b'req_1dcaa22e9d414f70c3c00fa4ea59cdb0'), (b'openai-processing-ms', b'477'), (b'openai-version', b'2020-10-01'), (b'openai-organization', b'user-it1rjsnvsxprd3wbxr1oqmpg'), (b'strict-transport-security', b'max-age=31536000; includeSubDomains; preload'), (b'cf-cache-status', b'DYNAMIC'), (b'Set-Cookie', b'__cf_bm=s7x9g5tzjsK54B98MT0clSc4ghOKHF1QXTGbATgPtQY-1741880588-1.0.1.1-_zloIL97WSgKtqMjs3cTSmIl9mletjVOXbmy9M3SyC4QdS_mzk1.83oazbYBreXJNtBDV2ZcDtCOESG9YL.y_3LprN1CLQyBfR.SYjZk9P4; path=/; expires=Thu, 13-Mar-25 16:13:08 GMT; domain=.api.openai.com; HttpOnly; Secure; SameSite=None'), (b'X-Content-Type-Options', b'nosniff'), (b'Set-Cookie', b'_cfuvid=WHEMvqq31y6SyrDzr04G29oS8BPC8R23y7UY4QAH_5k-1741880588648-0.0.1.1-604800000; path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None'), (b'Server', b'cloudflare'), (b'CF-RAY', b'91fca52ac9e1c3d2-SEA'), (b'alt-svc', b'h3=":443"; ma=86400')])
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/traces/ingest "HTTP/1.1 204 No Content"
+DEBUG:httpcore.http11:receive_response_body.started request=<Request [b'POST']>
+DEBUG:httpcore.http11:receive_response_body.complete
+DEBUG:httpcore.http11:response_closed.started
+DEBUG:httpcore.http11:response_closed.complete
+DEBUG:openai.agents.tracing:Exported 0 traces, 0 spans
