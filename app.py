@@ -65,21 +65,28 @@ def init_agent_components():
 # Helper function to convert our tool to OpenAI function
 def convert_tool_to_function(tool):
     """Convert our tool to an OpenAI function definition."""
+    # Use the tool's parameter_schema if available
+    if hasattr(tool, 'parameter_schema'):
+        parameters = tool.parameter_schema
+    else:
+        # Default schema if not provided
+        parameters = {
+            "type": "object",
+            "properties": {
+                "expression": {
+                    "type": "string", 
+                    "description": f"Input for {tool.name}"
+                }
+            },
+            "required": ["expression"]
+        }
+    
     return {
         "type": "function",
         "function": {
             "name": tool.name,
             "description": tool.description,
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "input": {
-                        "type": "string",
-                        "description": f"Input for {tool.name}"
-                    }
-                },
-                "required": ["input"]
-            }
+            "parameters": parameters
         }
     }
 

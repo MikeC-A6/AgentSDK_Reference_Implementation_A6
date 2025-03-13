@@ -1,5 +1,5 @@
 import logging
-from typing import Any
+from typing import Any, Dict
 import math
 import re
 
@@ -15,8 +15,22 @@ class CalculatorTool(BaseTool):
     @property
     def description(self) -> str:
         return "Perform basic calculations. Supports addition, subtraction, multiplication, division, and exponentiation."
+
+    @property
+    def parameter_schema(self) -> Dict:
+        """Get the parameter schema for this tool."""
+        return {
+            "type": "object",
+            "properties": {
+                "expression": {
+                    "type": "string",
+                    "description": "The mathematical expression to evaluate"
+                }
+            },
+            "required": ["expression"]
+        }
     
-    def execute(self, expression: str) -> str:
+    def execute(self, *args, **kwargs) -> str:
         """
         Calculate the result of a mathematical expression.
         
@@ -26,6 +40,14 @@ class CalculatorTool(BaseTool):
         Returns:
             A string containing the result of the calculation or an error message
         """
+        # Extract expression from either args or kwargs
+        if args and len(args) > 0:
+            expression = args[0]
+        elif 'expression' in kwargs:
+            expression = kwargs['expression']
+        else:
+            return "Error: No expression provided. Please specify a mathematical expression to evaluate."
+            
         logging.info(f"Calculating expression: {expression}")
         
         try:
@@ -86,3 +108,32 @@ class CalculatorTool(BaseTool):
                 return True
         
         return False
+        
+    def to_function_tool(self, function_tool_factory=None):
+        """
+        Convert this tool to a function tool for the OpenAI Agents SDK.
+        
+        Override the base method to provide a proper schema.
+        
+        Args:
+            function_tool_factory: A function that creates a function tool
+        
+        Returns:
+            A function tool for the OpenAI Agents SDK
+        """
+        if function_tool_factory is None:
+            return self
+        
+        # Create a wrapper function that matches our execute method
+        def wrapper(expression: str) -> str:
+            return self.execute(expression)
+        
+        # Set the name and docstring
+        wrapper.__name__ = self.name
+        wrapper.__doc__ = self.description
+        
+        # Create the function tool with the proper schema
+        return function_tool_factory(
+            wrapper,
+            schema=self.parameter_schema
+        )
