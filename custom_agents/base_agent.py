@@ -50,9 +50,13 @@ class BaseAgent:
         function_tools = []
         for tool in self.tools:
             if hasattr(tool, 'to_function_tool'):
-                function_tools.append(tool.to_function_tool(function_tool_factory))
+                tool_fn = tool.to_function_tool(function_tool_factory)
+                if tool_fn:
+                    function_tools.append(tool_fn)
+                    logging.info(f"Successfully converted tool {tool.name} to function tool")
             else:
                 function_tools.append(tool)
+                logging.warning(f"Tool {getattr(tool, 'name', 'unknown')} does not have to_function_tool method")
         
         # Create and return the agent
         return agent_factory(

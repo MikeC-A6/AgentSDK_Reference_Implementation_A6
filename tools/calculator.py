@@ -1,7 +1,7 @@
 import logging
-from typing import Any, Dict
 import math
 import re
+from typing import Dict, Any
 
 from tools.base_tool import BaseTool
 
@@ -14,28 +14,15 @@ class CalculatorTool(BaseTool):
     
     @property
     def description(self) -> str:
-        return "Perform basic calculations. Supports addition, subtraction, multiplication, division, and exponentiation."
+        return "Perform mathematical calculations. Supports addition, subtraction, multiplication, division, exponentiation, and basic math functions like sin, cos, sqrt."
 
-    @property
-    def parameter_schema(self) -> Dict:
-        """Get the parameter schema for this tool."""
-        return {
-            "type": "object",
-            "properties": {
-                "expression": {
-                    "type": "string",
-                    "description": "The mathematical expression to evaluate"
-                }
-            },
-            "required": ["expression"]
-        }
-    
-    def execute(self, *args, **kwargs) -> str:
+    def execute(self, *args, **kwargs) -> Any:
         """
-        Calculate the result of a mathematical expression.
+        Execute the calculator with the provided arguments.
         
         Args:
-            expression: A string containing a mathematical expression to evaluate
+            *args: Positional arguments (first one is used as expression if provided)
+            **kwargs: Keyword arguments (looks for 'expression' key)
             
         Returns:
             A string containing the result of the calculation or an error message
@@ -46,28 +33,40 @@ class CalculatorTool(BaseTool):
         elif 'expression' in kwargs:
             expression = kwargs['expression']
         else:
-            return "Error: No expression provided. Please specify a mathematical expression to evaluate."
+            return "Error: No expression provided. Please provide a mathematical expression to evaluate."
             
         logging.info(f"Calculating expression: {expression}")
         
         try:
-            # Clean the expression
+            # Clean and validate the expression
             cleaned_expr = self._clean_expression(expression)
-            
-            # Check for unsafe operations
             if self._is_unsafe_expression(cleaned_expr):
                 return "Error: The expression contains unsafe operations or functions."
             
-            # Evaluate the expression
-            result = eval(cleaned_expr, {"__builtins__": None}, 
-                         {"sin": math.sin, "cos": math.cos, "tan": math.tan, 
-                          "sqrt": math.sqrt, "pi": math.pi, "e": math.e})
+            # Define allowed math functions
+            math_context = {
+                "sin": math.sin, 
+                "cos": math.cos, 
+                "tan": math.tan, 
+                "sqrt": math.sqrt, 
+                "log": math.log,
+                "exp": math.exp,
+                "abs": abs,
+                "pi": math.pi, 
+                "e": math.e
+            }
+            
+            # Evaluate the expression with restricted context
+            result = eval(cleaned_expr, {"__builtins__": None}, math_context)
             
             # Format the result
-            if isinstance(result, int) or result.is_integer():
-                return str(int(result))
+            if isinstance(result, (int, float)):
+                if isinstance(result, int) or float(result).is_integer():
+                    return str(int(result))
+                else:
+                    return str(round(result, 8))
             else:
-                return str(round(result, 8))
+                return str(result)
                 
         except Exception as e:
             logging.error(f"Error in calculation: {str(e)}")
@@ -75,6 +74,9 @@ class CalculatorTool(BaseTool):
     
     def _clean_expression(self, expression: str) -> str:
         """Clean and sanitize the expression for evaluation."""
+        if not isinstance(expression, str):
+            expression = str(expression)
+            
         # Replace common mathematical notations
         expression = expression.lower().replace('^', '**')
         
@@ -85,7 +87,6 @@ class CalculatorTool(BaseTool):
     
     def _is_unsafe_expression(self, expression: str) -> bool:
         """Check if the expression contains unsafe operations."""
-        # List of patterns to reject
         unsafe_patterns = [
             r'import',
             r'exec',
@@ -113,8 +114,6 @@ class CalculatorTool(BaseTool):
         """
         Convert this tool to a function tool for the OpenAI Agents SDK.
         
-        Override the base method to provide a proper schema.
-        
         Args:
             function_tool_factory: A function that creates a function tool
         
@@ -124,16 +123,25 @@ class CalculatorTool(BaseTool):
         if function_tool_factory is None:
             return self
         
-        # Create a wrapper function that matches our execute method
-        def wrapper(expression: str) -> str:
+        # Define the schema for the function tool
+        schema = {
+            "type": "object",
+            "properties": {
+                "expression": {
+                    "type": "string",
+                    "description": "The mathematical expression to evaluate"
+                }
+            },
+            "required": ["expression"]
+        }
+        
+        # Create a wrapper function for the SDK
+        def calculator_function(expression: str) -> str:
+            """Perform mathematical calculations"""
             return self.execute(expression)
         
-        # Set the name and docstring
-        wrapper.__name__ = self.name
-        wrapper.__doc__ = self.description
-        
-        # Create the function tool with the proper schema
+        # Return the function tool
         return function_tool_factory(
-            wrapper,
-            schema=self.parameter_schema
+            calculator_function,
+            schema=schema
         )
