@@ -123,25 +123,20 @@ class CalculatorTool(BaseTool):
         if function_tool_factory is None:
             return self
         
-        # Define the schema for the function tool
-        schema = {
-            "type": "object",
-            "properties": {
-                "expression": {
-                    "type": "string",
-                    "description": "The mathematical expression to evaluate"
-                }
-            },
-            "required": ["expression"]
-        }
-        
-        # Create a wrapper function for the SDK
+        # Create a properly typed wrapper function for the SDK that will map to our execute method
+        # The function signature must match what we want in our parameters
         def calculator_function(expression: str) -> str:
-            """Perform mathematical calculations"""
+            """
+            Perform mathematical calculations. Supports addition, subtraction, multiplication, division, exponentiation, and basic math functions like sin, cos, sqrt.
+            
+            Args:
+                expression: The mathematical expression to evaluate
+            
+            Returns:
+                The result of the calculation as a string
+            """
             return self.execute(expression)
         
         # Return the function tool
-        return function_tool_factory(
-            calculator_function,
-            schema=schema
-        )
+        # The SDK will automatically extract the schema from the function signature and docstring
+        return function_tool_factory(calculator_function)
