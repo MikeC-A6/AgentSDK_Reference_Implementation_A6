@@ -23,5 +23,5 @@ class Config:
     def get_model_settings(cls) -> Dict[str, Any]:
         """Returns model settings dictionary."""
         return {
-            "reasoning_effort": cls.DEFAULT_REASONING_EFFORT
+            "reasoning": {"effort": cls.DEFAULT_REASONING_EFFORT}
         }
