@@ -1,58 +1,103 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-lg-8">
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h2 class="card-title mb-0">AI Agent Assistant</h2>
-            </div>
-            <div class="card-body">
-                <p class="lead">Ask me anything! I can create plans, search the web, and calculate results for you.</p>
-                
-                <div class="mb-3">
-                    <label for="user-input" class="form-label">Your Question:</label>
-                    <textarea class="form-control" id="user-input" rows="3" placeholder="What would you like to know or plan?"></textarea>
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-primary text-white py-3">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-robot fs-3 me-3"></i>
+                        <h2 class="card-title mb-0 fw-bold">AI Agent Assistant</h2>
+                    </div>
                 </div>
-                
-                <div class="d-grid gap-2">
-                    <button class="btn btn-primary" id="submit-btn" type="button">
-                        <i class="bi bi-send"></i> Submit
-                    </button>
-                </div>
-                
-                <div class="mt-4" id="response-container" style="display: none;">
-                    <div class="card">
-                        <div class="card-header bg-secondary">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span>Agent Response</span>
-                                <span id="trace-link-container" style="display: none;">
-                                    <a href="#" target="_blank" id="trace-link" class="btn btn-sm btn-info">
-                                        <i class="bi bi-activity"></i> View Trace
-                                    </a>
-                                </span>
+                <div class="card-body p-4">
+                    <p class="lead text-light mb-4">Ask me anything! I can create plans, search the web, and calculate results for you.</p>
+                    
+                    <div class="mb-4">
+                        <label for="user-input" class="form-label fw-semibold text-light">Your Question:</label>
+                        <textarea class="form-control form-control-lg border-2 rounded-3 shadow-sm" id="user-input" rows="3" placeholder="What would you like to know or plan?"></textarea>
+                    </div>
+                    
+                    <div class="d-grid gap-2 mb-4">
+                        <button class="btn btn-primary btn-lg py-2 px-4 rounded-3 shadow-sm" id="submit-btn" type="button">
+                            <i class="bi bi-send me-2"></i> Submit
+                        </button>
+                    </div>
+                    
+                    <div class="mt-4" id="plan-container" style="display: none;">
+                        <div class="card border-0 shadow-sm rounded-3 mb-4">
+                            <div class="card-header bg-info text-white py-3 rounded-top-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="d-flex align-items-center">
+                                        <i class="bi bi-list-check fs-4 me-2"></i> 
+                                        <span class="fw-bold">Agent Plan</span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="card-body p-4">
+                                <div id="plan-text" class="mb-0 plan-content"></div>
                             </div>
                         </div>
-                        <div class="card-body">
-                            <div id="response-text" class="mb-0"></div>
+                    </div>
+                    
+                    <div class="mt-3 mb-4" id="result-loading-container" style="display: none;">
+                        <div class="alert alert-info d-flex align-items-center p-3 rounded-3 shadow-sm border-0">
+                            <div class="spinner-border spinner-border-sm text-info me-3" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <span class="fw-semibold">Executing plan and generating response...</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3" id="response-container" style="display: none;">
+                        <div class="card border-0 shadow-sm rounded-3">
+                            <div class="card-header bg-success text-white py-3 rounded-top-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="d-flex align-items-center">
+                                        <i class="bi bi-check-circle fs-4 me-2"></i> 
+                                        <span class="fw-bold">Response</span>
+                                    </span>
+                                    <span id="trace-link-container" style="display: none;">
+                                        <a href="#" target="_blank" id="trace-link" class="btn btn-sm btn-light rounded-pill shadow-sm">
+                                            <i class="bi bi-activity"></i> View Trace
+                                        </a>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="card-body p-4">
+                                <div id="response-text" class="mb-0 response-content"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-danger mt-4 rounded-3 shadow-sm border-0" id="error-message" style="display: none;"></div>
+                    <div class="alert alert-warning mt-4 rounded-3 shadow-sm border-0" id="timeout-message" style="display: none;">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-exclamation-triangle fs-4 me-3"></i>
+                            <div>
+                                <strong>Request timed out</strong>
+                                <p class="mb-0">Your request is taking longer than expected to process. Please try a simpler query or try again later.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-center mt-4">
+                        <div class="spinner-border text-primary" role="status" id="loading-spinner" style="display: none;">
+                            <span class="visually-hidden">Loading...</span>
                         </div>
                     </div>
                 </div>
-                
-                <div class="alert alert-danger mt-3" id="error-message" style="display: none;"></div>
-                
-                <div class="d-flex justify-content-center mt-3">
-                    <div class="spinner-border text-primary" role="status" id="loading-spinner" style="display: none;">
-                        <span class="visually-hidden">Loading...</span>
+                <div class="card-footer bg-dark py-3 border-top">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-muted small">
+                            <i class="bi bi-cpu me-1"></i> Using o3-mini model with planning
+                        </span>
+                        <span>
+                            <i class="bi bi-calculator me-1" data-bs-toggle="tooltip" title="Calculator"></i>
+                            <i class="bi bi-search me-1" data-bs-toggle="tooltip" title="Web Search"></i>
+                        </span>
                     </div>
-                </div>
-            </div>
-            <div class="card-footer text-muted">
-                <div class="d-flex justify-content-between align-items-center">
-                    <span>Using o3-mini model with planning</span>
-                    <span>
-                        <i class="bi bi-calculator" data-bs-toggle="tooltip" title="Calculator"></i>
-                    </span>
                 </div>
             </div>
         </div>
@@ -65,24 +110,60 @@
     document.addEventListener('DOMContentLoaded', function() {
         const userInput = document.getElementById('user-input');
         const submitBtn = document.getElementById('submit-btn');
+        const planContainer = document.getElementById('plan-container');
+        const planText = document.getElementById('plan-text');
+        const resultLoadingContainer = document.getElementById('result-loading-container');
         const responseContainer = document.getElementById('response-container');
         const responseText = document.getElementById('response-text');
         const errorMessage = document.getElementById('error-message');
+        const timeoutMessage = document.getElementById('timeout-message');
         const loadingSpinner = document.getElementById('loading-spinner');
         const traceLink = document.getElementById('trace-link');
         const traceLinkContainer = document.getElementById('trace-link-container');
+        
+        // Initialize tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+        
+        // Add focus effect to textarea
+        userInput.addEventListener('focus', function() {
+            this.classList.add('border-primary');
+        });
+        
+        userInput.addEventListener('blur', function() {
+            this.classList.remove('border-primary');
+        });
+        
+        // Set a client-side timeout as a backup
+        let requestTimeout;
+        const REQUEST_TIMEOUT_MS = 30000; // 30 seconds
         
         submitBtn.addEventListener('click', async function() {
             const query = userInput.value.trim();
             
             if (!query) {
-                errorMessage.textContent = 'Please enter a question or task.';
+                errorMessage.innerHTML = '<i class="bi bi-exclamation-circle me-2"></i> Please enter a question or task.';
                 errorMessage.style.display = 'block';
+                userInput.classList.add('border-danger');
+                setTimeout(() => {
+                    userInput.classList.remove('border-danger');
+                }, 2000);
                 return;
             }
             
-            // Hide error message if previously shown
+            // Add animation to submit button
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Processing...';
+            
+            // Hide error messages if previously shown
             errorMessage.style.display = 'none';
+            timeoutMessage.style.display = 'none';
+            
+            // Hide previous results
+            planContainer.style.display = 'none';
+            resultLoadingContainer.style.display = 'none';
+            responseContainer.style.display = 'none';
             
             // Show loading spinner
             loadingSpinner.style.display = 'block';
@@ -90,43 +171,130 @@
             // Disable submit button while processing
             submitBtn.disabled = true;
             
+            // Set a client-side timeout
+            clearTimeout(requestTimeout);
+            requestTimeout = setTimeout(() => {
+                // If the request is still loading after the timeout, show a message
+                if (loadingSpinner.style.display !== 'none') {
+                    loadingSpinner.style.display = 'none';
+                    timeoutMessage.style.display = 'block';
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="bi bi-send me-2"></i> Submit';
+                }
+            }, REQUEST_TIMEOUT_MS);
+            
             try {
+                // Make a single API call to get both plan and result
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+                
                 const response = await fetch('/ask', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({ query }),
+                    signal: controller.signal
                 });
+                
+                clearTimeout(timeoutId);
                 
                 const data = await response.json();
                 
+                // Hide the main loading spinner
+                loadingSpinner.style.display = 'none';
+                
+                // Clear the client-side timeout
+                clearTimeout(requestTimeout);
+                
+                // Reset submit button
+                submitBtn.innerHTML = '<i class="bi bi-send me-2"></i> Submit';
+                submitBtn.disabled = false;
+                
                 if (response.ok) {
-                    // Format the response text with line breaks and markdown
-                    responseText.innerHTML = formatResponse(data.response);
-                    responseContainer.style.display = 'block';
-                    
-                    // Set trace link if available
-                    if (data.trace_id) {
-                        traceLink.href = `https://platform.openai.com/traces/${data.trace_id}`;
-                        traceLinkContainer.style.display = 'inline-block';
+                    if (data.timeout) {
+                        // Show timeout message
+                        timeoutMessage.style.display = 'block';
+                    } else if (data.plan) {
+                        // First, display the plan with a fade-in effect
+                        planText.innerHTML = formatResponse(data.plan);
+                        planContainer.style.display = 'block';
+                        planContainer.classList.add('animate-fade-in');
+                        
+                        // Show a loading indicator for a brief moment to simulate the execution
+                        resultLoadingContainer.style.display = 'block';
+                        
+                        // Wait a moment to simulate the execution time
+                        // This gives the user time to read the plan before showing the result
+                        setTimeout(() => {
+                            // Hide the loading indicator
+                            resultLoadingContainer.style.display = 'none';
+                            
+                            // Display the execution result with a fade-in effect
+                            if (data.response) {
+                                responseText.innerHTML = formatResponse(data.response);
+                                responseContainer.style.display = 'block';
+                                responseContainer.classList.add('animate-fade-in');
+                                
+                                // Scroll to the response
+                                responseContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                            }
+                            
+                            // Set trace link if available
+                            if (data.trace_id) {
+                                traceLink.href = `https://platform.openai.com/traces/${data.trace_id}`;
+                                traceLinkContainer.style.display = 'inline-block';
+                            } else {
+                                traceLinkContainer.style.display = 'none';
+                            }
+                        }, 1500); // 1.5 second delay
                     } else {
-                        traceLinkContainer.style.display = 'none';
+                        // If no plan was returned, just show the response
+                        responseText.innerHTML = formatResponse(data.response || data.full_response);
+                        responseContainer.style.display = 'block';
+                        responseContainer.classList.add('animate-fade-in');
+                        
+                        // Set trace link if available
+                        if (data.trace_id) {
+                            traceLink.href = `https://platform.openai.com/traces/${data.trace_id}`;
+                            traceLinkContainer.style.display = 'inline-block';
+                        } else {
+                            traceLinkContainer.style.display = 'none';
+                        }
                     }
                 } else {
-                    errorMessage.textContent = data.error || 'An error occurred while processing your request.';
-                    errorMessage.style.display = 'block';
+                    if (response.status === 408) {
+                        // Show timeout message
+                        timeoutMessage.style.display = 'block';
+                    } else {
+                        // Show error message
+                        errorMessage.innerHTML = `<i class="bi bi-exclamation-circle me-2"></i> ${data.error || 'An error occurred while processing your request.'}`;
+                        errorMessage.style.display = 'block';
+                    }
                 }
             } catch (error) {
                 console.error('Error:', error);
-                errorMessage.textContent = 'Network error. Please try again later.';
-                errorMessage.style.display = 'block';
-            } finally {
+                
+                // Clear the client-side timeout
+                clearTimeout(requestTimeout);
+                
                 // Hide loading spinner
                 loadingSpinner.style.display = 'none';
                 
-                // Re-enable submit button
+                // Reset submit button
+                submitBtn.innerHTML = '<i class="bi bi-send me-2"></i> Submit';
                 submitBtn.disabled = false;
+                
+                // Check if it's an abort error (timeout)
+                if (error.name === 'AbortError') {
+                    timeoutMessage.style.display = 'block';
+                } else {
+                    errorMessage.innerHTML = '<i class="bi bi-exclamation-circle me-2"></i> Network error. Please try again later.';
+                    errorMessage.style.display = 'block';
+                }
+                
+                // Hide all loading indicators
+                resultLoadingContainer.style.display = 'none';
             }
         });
         
@@ -138,22 +306,92 @@
             }
         });
         
-        // Simple function to format the response text
+        // Function to format the response text
         function formatResponse(text) {
             // Convert line breaks to <br> tags
             text = text.replace(/\n/g, '<br>');
             
             // Basic formatting for headers
-            text = text.replace(/###\s+(.*?)(\n|$)/g, '<h5>$1</h5>');
-            text = text.replace(/##\s+(.*?)(\n|$)/g, '<h4>$1</h4>');
-            text = text.replace(/#\s+(.*?)(\n|$)/g, '<h3>$1</h3>');
+            text = text.replace(/###\s+(.*?)(<br>|$)/g, '<h5 class="mt-3 mb-2 fw-bold text-light">$1</h5>');
+            text = text.replace(/##\s+(.*?)(<br>|$)/g, '<h4 class="mt-4 mb-3 fw-bold text-light">$1</h4>');
+            text = text.replace(/#\s+(.*?)(<br>|$)/g, '<h3 class="mt-4 mb-3 fw-bold text-light">$1</h3>');
             
             // Bold and italic text
             text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
             text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
             
+            // Format bullet points
+            text = text.replace(/- (.*?)(<br>|$)/g, '<li class="mb-2">$1</li>');
+            text = text.replace(/<li class="mb-2">(.*?)<\/li>(<li class="mb-2">|$)/g, function(match) {
+                return match.startsWith('<ul class="ps-4 my-3">') ? match : '<ul class="ps-4 my-3">' + match;
+            });
+            text = text.replace(/<\/li>(?!<li class="mb-2">|<ul class="ps-4 my-3">|<\/ul>)/g, '</li></ul>');
+            
+            // Format links - handle markdown style links [text](url)
+            text = text.replace(/\[(.*?)\]\((https?:\/\/[^\s]+)\)/g, '<a href="$2" target="_blank" class="text-decoration-none">$1 <i class="bi bi-box-arrow-up-right text-muted small"></i></a>');
+            
+            // Format citations
+            text = text.replace(/\(([^)]+\.(?:org|com|edu|gov|net)[^)]*)\)/g, '<span class="text-muted small">($1)</span>');
+            
             return text;
         }
     });
 </script>
+
+<style>
+    /* Custom styles for the UI */
+    .animate-fade-in {
+        animation: fadeIn 0.5s ease-in-out;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .plan-content, .response-content {
+        line-height: 1.6;
+        font-size: 1.05rem;
+        color: #e9ecef;
+    }
+    
+    .plan-content ul, .response-content ul {
+        margin-bottom: 1rem;
+    }
+    
+    .card {
+        transition: all 0.3s ease;
+        background-color: #2a2a2a;
+    }
+    
+    #user-input {
+        transition: border-color 0.3s ease;
+    }
+    
+    #user-input:focus {
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    }
+    
+    .btn-primary {
+        transition: all 0.2s ease;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-primary:active {
+        transform: translateY(0);
+    }
+    
+    /* Fix for text colors */
+    .text-secondary {
+        color: #adb5bd !important;
+    }
+    
+    .form-label {
+        color: #e9ecef;
+    }
+</style>
 {% endblock %}

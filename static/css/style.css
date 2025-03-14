@@ -1,39 +1,92 @@
-/* Custom styles for AI Agent System */
+/* Modern styles for AI Agent Assistant */
+
+/* Global styles */
+:root {
+    --primary-color: #0d6efd;
+    --secondary-color: #6c757d;
+    --success-color: #198754;
+    --info-color: #0dcaf0;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --light-color: #f8f9fa;
+    --dark-color: #212529;
+    --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    --transition-speed: 0.3s;
+    --text-color: #e9ecef;
+    --bg-light: #2a2a2a;
+}
 
 /* Add a bit more space in the container */
 .container {
     padding: 15px;
 }
 
+/* Card styling with modern shadows */
+.card {
+    border: none;
+    box-shadow: var(--card-shadow);
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+.card:hover {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
 /* Style for agent response container */
-#response-container {
-    border-radius: 8px;
-    transition: opacity 0.3s ease-in-out;
+#response-container, #plan-container {
+    border-radius: 12px;
+    transition: all var(--transition-speed) ease-in-out;
 }
 
 /* Enhance text area appearance */
 #user-input {
     resize: vertical;
-    min-height: 80px;
-    border-radius: 8px;
+    min-height: 100px;
+    border-radius: 12px;
+    transition: all var(--transition-speed) ease;
+    font-size: 1.05rem;
+    line-height: 1.6;
+}
+
+#user-input:focus {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    border-color: var(--primary-color);
 }
 
 /* Make the submit button more noticeable */
 #submit-btn {
-    padding: 10px;
-    font-weight: 500;
+    padding: 12px 24px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease;
+}
+
+#submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+}
+
+#submit-btn:active {
+    transform: translateY(0);
 }
 
 /* Format response text nicely */
-#response-text {
+#response-text, #plan-text {
     white-space: pre-line;
-    line-height: 1.5;
+    line-height: 1.7;
+    font-size: 1.05rem;
+    color: var(--text-color);
 }
 
 /* Custom styling for the trace link */
 #trace-link {
     text-decoration: none;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
+    transition: all var(--transition-speed) ease;
+}
+
+#trace-link:hover {
+    transform: translateY(-2px);
 }
 
 /* Style for loading spinner */
@@ -52,4 +105,133 @@
 .card-footer i {
     margin-left: 10px;
     font-size: 1.2rem;
+    transition: transform 0.2s ease;
+}
+
+.card-footer i:hover {
+    transform: scale(1.2);
+}
+
+/* Plan container styling */
+#plan-container .card {
+    border-left: 4px solid var(--info-color);
+    background-color: rgba(13, 202, 240, 0.05);
+}
+
+/* Response container styling */
+#response-container .card {
+    border-left: 4px solid var(--success-color);
+    background-color: rgba(25, 135, 84, 0.05);
+}
+
+/* Fix for light background cards */
+.bg-light {
+    background-color: var(--bg-light) !important;
+}
+
+.card-body {
+    color: var(--text-color);
+}
+
+/* Result loading container styling */
+#result-loading-container .alert {
+    border-left: 4px solid var(--info-color);
+    animation: pulse 1.5s infinite;
+}
+
+/* Pulse animation for the loading indicator */
+@keyframes pulse {
+    0% {
+        opacity: 0.7;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.7;
+    }
+}
+
+/* Fade-in animation */
+.animate-fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Styling for links in responses */
+#response-text a, #plan-text a {
+    color: var(--primary-color);
+    text-decoration: none;
+    border-bottom: 1px dashed rgba(13, 110, 253, 0.4);
+    transition: all 0.2s ease;
+}
+
+#response-text a:hover, #plan-text a:hover {
+    border-bottom: 1px solid var(--primary-color);
+}
+
+/* Styling for code blocks */
+pre, code {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    padding: 0.2em 0.4em;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    font-size: 0.9em;
+}
+
+pre {
+    padding: 1em;
+    overflow-x: auto;
+}
+
+pre code {
+    background-color: transparent;
+    padding: 0;
+}
+
+/* Styling for blockquotes */
+blockquote {
+    border-left: 4px solid var(--secondary-color);
+    padding-left: 1em;
+    margin-left: 0;
+    color: var(--secondary-color);
+}
+
+/* Styling for tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1em 0;
+}
+
+th, td {
+    padding: 0.75em;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+th {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #user-input {
+        min-height: 80px;
+    }
+    
+    #response-text, #plan-text {
+        font-size: 1rem;
+    }
+    
+    .card-header {
+        padding: 0.75rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
 }

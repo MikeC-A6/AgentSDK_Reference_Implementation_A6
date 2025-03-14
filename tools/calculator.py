@@ -53,7 +53,8 @@ class CalculatorTool(BaseTool):
                 "exp": math.exp,
                 "abs": abs,
                 "pi": math.pi, 
-                "e": math.e
+                "e": math.e,
+                "ln": lambda x: math.log(x, math.e)  # Add natural logarithm function
             }
             
             # Evaluate the expression with restricted context
@@ -135,7 +136,8 @@ class CalculatorTool(BaseTool):
             Returns:
                 The result of the calculation as a string
             """
-            return self.execute(expression)
+            # Pass the expression as a keyword argument instead of a positional argument
+            return self.execute(expression=expression)
         
         # Return the function tool
         # The SDK will automatically extract the schema from the function signature and docstring

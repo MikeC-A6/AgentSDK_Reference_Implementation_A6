@@ -8,7 +8,7 @@ class Config:
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
     
     # Agent settings
-    DEFAULT_MODEL = "o3-mini"  # Using o3-mini as requested
+    DEFAULT_MODEL = "o3-mini"  # Using o3-mini for planning, with handoff to gpt-4o-mini for web search
     DEFAULT_REASONING_EFFORT = "medium"  # Medium reasoning effort
     
     # Web search settings
@@ -25,5 +25,5 @@ class Config:
         # Using default settings for model since reasoning is not supported
         # in the ModelSettings class in the agents SDK
         return {
-            "temperature": 0.7
+            # Removed temperature parameter as it's not supported with o3-mini model
         }
